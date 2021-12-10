@@ -152,7 +152,7 @@ def main():
             args_loaded = json.load(f)
             args.update(args_loaded)
             print(f"Loaded args from {args_raw['file']}: {args_loaded}")
-    print(args_raw, args, control_args)
+    # print(args_raw, args, control_args)
     wait_key = not control_args['quiet']
     if control_args['create'] and control_args['destroy'] and not control_args['quiet']:
         print(f"Warning: will create the droplet and wait until key down.")
