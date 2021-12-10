@@ -1,0 +1,7 @@
+{
+  "name": "temp-droplet",
+  "region": "sgp1",
+  "image": "ubuntu-20-04-x64",
+  "size_slug": "s-1vcpu-1gb",
+  "backups": false
+}
