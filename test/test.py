@@ -11,6 +11,7 @@ except ModuleNotFoundError:
 if secrets is not None:
     os.environ['DIGITALOCEAN_ACCESS_TOKEN'] = secrets.DIGITALOCEAN_ACCESS_TOKEN
 
+
 def test_manager():
     manager = digitalocean.Manager()
     return manager
@@ -38,10 +39,12 @@ def test_droplet_list():
         print(dir(droplet))
     return droplets
 
+
 def test_droplet_destroy():
     droplets = test_droplet_list()
     for droplet in droplets:
         droplet.destroy()
+
 
 def test_add_keys():
     manager = test_manager()

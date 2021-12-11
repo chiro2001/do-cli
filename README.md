@@ -2,9 +2,16 @@
 
 ## Usage
 
+### Install requirements
+
 ```shell
 python3 -m pip install -r requirements.txt
-python3 do-cli.py -h
+```
+
+### CLI Usage
+
+```shell
+python3 do_cli.py -h
 ```
 
 ```
@@ -31,11 +38,11 @@ optional arguments:
   -b, --backups         enable droplet backups.
 ```
 
-## Example
+### Example
 
 ```shell
 # Create a droplet from do-cli.json, wait key, and then destroy it.
-python3 do-cli.py -f do-cli.json -c -d
+python3 do_cli.py -f do-cli.json -c -d
 
 Loaded args from do-cli.json: {'name': 'temp-droplet', 'region': 'sgp1', 'image': 'ubuntu-20-04-x64', 'size_slug': 's-1vcpu-1gb', 'backups': False}
 Warning: will create the droplet and wait until key down.
@@ -57,11 +64,12 @@ destroy droplet status: in-progress
 destroy droplet status: completed
 ```
 
-## Args
+### Args
 
-`DIGITALOCEAN_ACCESS_TOKEN`: You can generate it from [here](https://cloud.digitalocean.com/account/api/tokens). Set it as `$DIGITALOCEAN_ACCESS_TOKEN` or create python file named as `secrets.py` is ok.
+`DIGITALOCEAN_ACCESS_TOKEN`: You can generate it from [here](https://cloud.digitalocean.com/account/api/tokens). Set it
+as `$DIGITALOCEAN_ACCESS_TOKEN` or create python file named as `secrets.py` is ok.
 
-`do-cli.json`:
+`do-cli.json`: It's an optional file to provide default value. Args from command line will override it.
 
 ```json
 {
@@ -72,3 +80,147 @@ destroy droplet status: completed
   "backups": false
 }
 ```
+
+## Server Usage
+
+You should provide `Token` in every request.
+
+```shell
+python3 server.py
+```
+
+To change listen address and port, modify `data/config.py`.
+
+### API Document
+
+Visit `/api/v2/docs` to get API document.
+
+```json
+{
+  "code": 200,
+  "data": {
+    "document": {
+      "/docs": {
+        "disc": "Document test",
+        "methods": {
+          "get": {
+            "disc": "Get all docs for APIs"
+          }
+        }
+      },
+      "/": {
+        "disc": "API for do-cli",
+        "methods": {
+          "delete": {
+            "disc": "Destroy your droplet\n:return:",
+            "args": [
+              {
+                "name": "Token",
+                "type": "str",
+                "location": [
+                  "headers"
+                ],
+                "help": "token of your digital ocean api",
+                "choices": []
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "location": [
+                  "args"
+                ],
+                "help": "name of droplet (destroy all if None)",
+                "choices": []
+              }
+            ]
+          },
+          "get": {
+            "disc": "Get your droplet list\n:return: List[Droplet]",
+            "args": [
+              {
+                "name": "Token",
+                "type": "str",
+                "location": [
+                  "headers"
+                ],
+                "help": "token of your digital ocean api",
+                "choices": []
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "location": [
+                  "args"
+                ],
+                "help": "name to use filter (fetch all if None)",
+                "choices": []
+              }
+            ]
+          },
+          "post": {
+            "disc": "Create a droplet\n:return: 200 if ok",
+            "args": [
+              {
+                "name": "Token",
+                "type": "str",
+                "location": [
+                  "headers"
+                ],
+                "help": "token of your digital ocean api",
+                "choices": []
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "location": [
+                  "json"
+                ],
+                "help": "name of droplet",
+                "choices": []
+              },
+              {
+                "name": "region",
+                "type": "str",
+                "location": [
+                  "json"
+                ],
+                "help": "region of droplet",
+                "choices": []
+              },
+              {
+                "name": "image",
+                "type": "str",
+                "location": [
+                  "json"
+                ],
+                "help": "image of droplet",
+                "choices": []
+              },
+              {
+                "name": "size_slug",
+                "type": "str",
+                "location": [
+                  "json"
+                ],
+                "help": "size of droplet",
+                "choices": []
+              },
+              {
+                "name": "backups",
+                "type": "bool",
+                "location": [
+                  "json"
+                ],
+                "help": "enable backup",
+                "choices": []
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+See `test/test_api.py` for more.
