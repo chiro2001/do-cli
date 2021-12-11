@@ -42,7 +42,7 @@ optional arguments:
 
 ```shell
 # Create a droplet from do-cli.json, wait key, and then destroy it.
-python3 do_cli.py -f do-cli.json -c -d
+python3 do_cli.py -c -d
 
 Loaded args from do-cli.json: {'name': 'temp-droplet', 'region': 'sgp1', 'image': 'ubuntu-20-04-x64', 'size_slug': 's-1vcpu-1gb', 'backups': False}
 Warning: will create the droplet and wait until key down.
@@ -66,7 +66,7 @@ destroy droplet status: completed
 
 ### Args
 
-`DIGITALOCEAN_ACCESS_TOKEN`: You can generate it from [here](https://cloud.digitalocean.com/account/api/tokens). Set it
+`DIGITALOCEAN_ACCESS_TOKEN`: You can generate it [here](https://cloud.digitalocean.com/account/api/tokens). Set it
 as `$DIGITALOCEAN_ACCESS_TOKEN` or create python file named as `secrets.py` is ok.
 
 `do-cli.json`: It's an optional file to provide default value. Args from command line will override it.
