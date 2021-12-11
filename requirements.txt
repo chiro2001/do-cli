@@ -1,1 +1,8 @@
 python-digitalocean
+flask
+requests
+werkzeug
+flask_cors
+colorlog
+flask-restful
+

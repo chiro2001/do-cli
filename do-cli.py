@@ -10,6 +10,7 @@ from digitalocean.Droplet import Droplet
 from digitalocean.Manager import Manager
 from digitalocean.Project import Project
 from digitalocean.SSHKey import SSHKey
+from logger import logger
 
 
 class DoCli:
@@ -39,67 +40,67 @@ class DoCli:
         if secrets is not None:
             os.environ['DIGITALOCEAN_ACCESS_TOKEN'] = secrets.DIGITALOCEAN_ACCESS_TOKEN
 
-    def wait_until_complete(self, droplet: Droplet, task_name: str = 'task', target_state: str = 'completed', sleep_time: int = 2):
+    @staticmethod
+    def wait_until_complete(droplet: Droplet, task_name: str = 'task', target_state: str = 'completed',
+                            sleep_time: int = 2):
         done = False
         while not done:
             try:
                 actions = droplet.get_actions()
                 for action in actions:
                     action.load()
-                    # Once it shows "completed", droplet is up and running
                     status = action.status
-                    # print(action.status, type(action.status), dir(action.status))
-                    print(f"{task_name} status: {status}")
+                    logger.info(f"{task_name} status: {status}")
                     if target_state == status:
                         done = True
                         break
                 time.sleep(sleep_time)
             except KeyboardInterrupt as e:
-                print(f"{task_name} was cancelled by {e.__class__.__name__}")
+                logger.warning(f"{task_name} was cancelled by {e.__class__.__name__}")
                 break
 
     def create(self, *args, with_keys: bool = True, wait_complete: bool = True, **kwargs):
-        print(f"Creating droplet: {kwargs.get('name')}")
+        logger.info(f"Creating droplet: {kwargs.get('name')}")
         if with_keys or self.upload_keys:
-            print(f"will upload your ssh keys.")
+            logger.info(f"Will upload your ssh keys.")
             kwargs['keys'] = self.keys
         droplet = digitalocean.Droplet(*args, **kwargs)
         droplet.create()
         if wait_complete:
-            self.wait_until_complete(droplet, task_name='create droplet')
+            self.wait_until_complete(droplet, task_name='Create droplet')
         self.update_info()
 
     def destroy(self, *args, wait_complete: bool = True, name: str = None, **kwargs) -> bool:
         self.update_info()
         if name is not None:
-            print(f"Destroying droplet: {name}...")
+            logger.info(f"Destroying droplet: {name}...")
         else:
-            print(f"Destroying all droplet...")
+            logger.info(f"Destroying all droplet...")
         if len(self.droplets) == 0:
-            print(f"No droplets in your account.")
+            logger.warning(f"No droplets in your account.")
             return False
         confirm_destroy = not name is None or self.quiet
-        destroied = False
+        destroyed = False
         # destroy all if no name provided
         for droplet in self.droplets:
             if name is None or droplet.name == name:
                 if name is None and not confirm_destroy:
-                    inputed_value = False
-                    while not inputed_value:
+                    has_input = False
+                    while not has_input:
                         val = input(
-                            'Continue to destory all the droplets? [Y/n]').lower()
+                            'Continue to destroy all the droplets? [Y/n]').lower()
                         if val == 'n':
                             return False
                         elif val == 'y':
                             confirm_destroy = True
-                            inputed_value = True
+                            has_input = True
                 droplet.destroy()
                 if wait_complete:
                     self.wait_until_complete(
                         droplet, task_name=f'destroy{" all" if name is None else ""} droplet')
-                    destroied = True
-        if not destroied:
-            print(f"Warning: did not destroy any droplet!")
+                    destroyed = True
+        if not destroyed:
+            logger.warning(f"Did not destroy any droplet!")
         return True
 
 
@@ -145,17 +146,16 @@ def main():
     control_args = {k: args_raw[k] if isinstance(
         args_raw[k], bool) else False for k in args_raw if k in control_keys}
     if not control_args['create'] and not control_args['destroy']:
-        print(f"No task to excute. exiting...")
+        logger.warning(f"No task to excute. exiting...")
         sys.exit(1)
     if 'file' in args_raw and args_raw['file'] is not None and os.path.exists(args_raw['file']):
         with open(args_raw['file'], 'r', encoding='utf8') as f:
             args_loaded = json.load(f)
             args.update(args_loaded)
-            print(f"Loaded args from {args_raw['file']}: {args_loaded}")
-    # print(args_raw, args, control_args)
+            logger.info(f"Loaded args from {args_raw['file']}: {args_loaded}")
     wait_key = not control_args['quiet']
     if control_args['create'] and control_args['destroy'] and not control_args['quiet']:
-        print(f"Warning: will create the droplet and wait until key down.")
+        logger.warning(f"Will create the droplet and wait until key down.")
         wait_key = True
     cli = DoCli(**control_args)
     if control_args['create']:
@@ -164,13 +164,13 @@ def main():
             if key not in args:
                 args_needed.append(key)
         if len(args_needed) != 0:
-            print(f"arg(s) needed: {args_needed}")
+            logger.error(f"arg(s) needed: {args_needed}")
             sys.exit(1)
-        print(f"args: {args}")
+        logger.info(f"args: {args}")
         cli.create(**args)
     while wait_key and control_args['create'] and control_args['destroy']:
         val = input(
-            f'Continue to destory this droplet ({args.get("name")})? [Y/n]').lower()
+            f'Continue to destroy this droplet ({args.get("name")})? [Y/n]').lower()
         if val == 'n':
             sys.exit(0)
         elif val == 'y':
@@ -181,7 +181,7 @@ def main():
 
 def test():
     cli = DoCli()
-    # cli.create(**default_args, with_keys=True, wait_complete=True)
+    cli.create(**default_args, with_keys=True, wait_complete=True)
     cli.destroy()
 
 
