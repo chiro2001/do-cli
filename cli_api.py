@@ -31,7 +31,7 @@ class DoCliAPI(Resource):
     def get(self):
         """
         Get your droplet list
-        :return: List[Droplet]
+        :return: droplets: List[Droplet]
         """
         args = self.args_get.parse_args()
         args = {k.lower(): args[k] for k in args}
@@ -49,13 +49,13 @@ class DoCliAPI(Resource):
                     logger.error(f"{e}")
         except TokenError:
             return make_result(403, message='Token error')
-        return make_result(data=droplets)
+        return make_result(data={"droplets": droplets})
 
     @args_required_method(args_post)
     def post(self):
         """
         Create a droplet
-        :return: 200 if ok
+        :return: droplet: droplet info
         """
         args = self.args_post.parse_args()
         args = {k.lower(): args[k] for k in args}
@@ -66,7 +66,9 @@ class DoCliAPI(Resource):
             cli.create(**args, with_keys=True, wait_complete=True)
         except TokenError:
             return make_result(403, message='Token error')
-        return make_result()
+        return make_result(data={
+            "droplet": cli.find_droplet(name=args.get('name'))
+        })
 
     @args_required_method(args_delete)
     def delete(self):
