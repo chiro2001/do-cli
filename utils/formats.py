@@ -16,6 +16,10 @@ class DefaultResultEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime.timedelta):
             return str(obj)
+        try:
+            json.dumps(obj)
+        except TypeError:
+            return str(obj)
         return json.JSONEncoder.default(self, obj)
 
 

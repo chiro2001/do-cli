@@ -5,7 +5,7 @@ from flask_restful import Resource, Api
 from utils.logger import logger
 from utils.make_result import make_result
 from utils.docs import get_class_docs
-from cli_api import DoCliAPI
+from do_api import DoCliAPI
 
 
 class MainAPI(Resource):
