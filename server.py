@@ -26,7 +26,7 @@ def main():
     parser.add_argument('-p', '--port', required=False, default=port,
                         help=f'specific port to listen on. (default {port})')
     args = parser.parse_args().__dict__
-    host, port = args.get('listen'), args.get('port')
+    host, port = args.get('listen'), int(args.get('port'))
     logger.info(f'Digital Ocean API server started at {host}:{port}')
     run_simple(host, port, dm, use_reloader=Constants.RUN_USE_RELOAD)
 
