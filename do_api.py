@@ -38,15 +38,7 @@ class DoCliAPI(Resource):
         token, name = args.get('token'), args.get('name')
         try:
             cli = DoCli(token=token, local_token=True, no_upload_keys=True, quiet=True)
-            droplets = [droplet.__getstate__() for droplet in cli.find_droplets(name=name)]
-            # for d in droplets:
-            #     try:
-            #         if '_log' in d:
-            #             del d['_log']
-            #         if '_session' in d:
-            #             del d['_session']
-            #     except Exception as e:
-            #         logger.error(f"{e}")
+            droplets = [droplet for droplet in cli.find_droplets(name=name)]
         except TokenError:
             return make_result(403, message='Token error')
         return make_result(data={"droplets": droplets})

@@ -2,6 +2,7 @@ import json
 import datetime
 from pytz import tzinfo
 import pytz
+from digitalocean import Droplet
 
 
 class DefaultResultEncoder(json.JSONEncoder):
@@ -16,6 +17,8 @@ class DefaultResultEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime.timedelta):
             return str(obj)
+        elif isinstance(obj, Droplet):
+            return json.loads(json.dumps(obj.__getstate__(), cls=DefaultResultEncoder, ensure_ascii=False, indent=2))
         try:
             json.dumps(obj)
         except TypeError:
