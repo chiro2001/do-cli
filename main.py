@@ -5,7 +5,7 @@ from data.config import Constants
 import logging
 from utils.logger import logger
 
-from utils.file_static import app as app_file
+# from utils.file_static import app as app_file
 from apis.api_main import app as app_api
 
 # 只显示错误消息
@@ -14,7 +14,10 @@ logger_werkzeug.setLevel(logging.ERROR)
 # logger_werkzeug.setLevel(logging.DEBUG)
 
 # 中间件
-dm = DispatcherMiddleware(app_file, {Constants.API_PATH: app_api})
+# dm = DispatcherMiddleware(app_file, {Constants.API_PATH: app_api})
+
+app = app_api
+dm = app
 
 
 def main():

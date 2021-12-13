@@ -86,7 +86,7 @@ as `$DIGITALOCEAN_ACCESS_TOKEN` or create python file named as `secrets.py` is o
 You should provide `Token` in every request.
 
 ```shell
-python3 server.py
+python3 main.py
 ```
 
 To change listen address and port, modify `data/config.py`.

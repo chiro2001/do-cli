@@ -1,0 +1,1 @@
+{"id":"4e49bb5f-2f2e-462f-a733-3835728a9782","space":14416,"runtime":"python3.9","name":"do-cli-test","path":"mlkort","project":"c0wymltm","account":"144798365827","region":"ap-southeast-1","deps":["python-digitalocean","flask","requests","werkzeug","flask_cors","colorlog","flask-restful"],"envs":null,"public":false,"log_level":"","cron":""}
